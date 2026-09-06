@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "initialAssetCount": 2,
+    "assets": [
+        {
+            "id": "829E69BA-BB53-4841-A138-4DF0C2A74236",
+            "url-1080-SDR": "https://sylvan.apple.com/Aerials/2x/Videos/LA_A006_C008_2K_SDR_HEVC.mov",
+            "url-1080-HDR": "https://sylvan.apple.com/Aerials/2x/Videos/LA_A006_C008_2K_HDR_HEVC.mov",
+            "url-4K-SDR": "https://sylvan.apple.com/Aerials/2x/Videos/LA_A006_C008_4K_SDR_HEVC.mov",
+            "url-4K-HDR": "https://sylvan.apple.com/Aerials/2x/Videos/LA_A006_C008_4K_HDR_HEVC.mov",
+            "accessibilityLabel": "Los Angeles"
+        },
+        {
+            "id": "6E2FC8AC-832D-46CF-B306-BB2A05030C17",
+            "url-1080-SDR": "https://sylvan.apple.com/Aerials/2x/Videos/LW_L001_C006_2K_SDR_HEVC.mov",
+            "url-1080-HDR": "https://sylvan.apple.com/Aerials/2x/Videos/LW_L001_C006_2K_HDR_HEVC.mov",
+            "url-4K-SDR": "https://sylvan.apple.com/Aerials/2x/Videos/LW_L001_C006_4K_SDR_HEVC.mov",
+            "url-4K-HDR": "https://sylvan.apple.com/Aerials/2x/Videos/LW_L001_C006_4K_HDR_HEVC.mov",
+            "accessibilityLabel": "Liwa"
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+/build/
+/rust/target/
+pkg/
+*.pkg.tar.*
+rust/.qmlls.ini

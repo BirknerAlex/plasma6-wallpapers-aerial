@@ -1,0 +1,20 @@
+pkgbase = plasma6-wallpapers-aerial
+	pkgdesc = Plasma 6 wallpaper plugin that plays Apple TV Aerial screensaver videos
+	pkgver = 0.1.0
+	pkgrel = 1
+	url = https://github.com/BirknerAlex/plasma6-wallpapers-aerial
+	arch = x86_64
+	arch = aarch64
+	license = GPL-2.0-or-later
+	makedepends = extra-cmake-modules
+	makedepends = cmake
+	makedepends = rust
+	makedepends = corrosion
+	depends = plasma6-workspace
+	depends = qt6-declarative
+	depends = qt6-multimedia
+	depends = qt6-base
+	source = git+https://github.com/BirknerAlex/plasma6-wallpapers-aerial.git#tag=v0.1.0
+	sha256sums = SKIP
+
+pkgname = plasma6-wallpapers-aerial

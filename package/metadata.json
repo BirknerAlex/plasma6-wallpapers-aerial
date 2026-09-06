@@ -1,0 +1,19 @@
+{
+    "KPackageStructure": "Plasma/Wallpaper",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Alexander Birkner",
+                "Email": "alex.birkner@gmail.com"
+            }
+        ],
+        "Category": "Wallpaper",
+        "Description": "Plays Apple TV Aerial screensaver videos as an animated desktop wallpaper",
+        "Icon": "preferences-desktop-wallpaper",
+        "Id": "io.github.birkneralex.aerial",
+        "License": "GPL-2.0-or-later",
+        "Name": "Aerial",
+        "Version": "0.1.0",
+        "Website": "https://github.com/BirknerAlex/plasma6-wallpapers-aerial"
+    }
+}

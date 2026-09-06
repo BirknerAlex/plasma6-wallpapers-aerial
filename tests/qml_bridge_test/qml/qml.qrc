@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/qt/qml/tests/qml_bridge_test">
+    <file>main.qml</file>
+  </qresource>
+</RCC>
