@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.1...plasma6-wallpapers-aerial-v0.1.2) (2026-09-06)
+
+
+### Bug Fixes
+
+* self-dispatch release-build.yml and fix offline cargo update ordering ([bd01325](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/commit/bd0132531ae30fce05516365d1a6812d4b0e9ff4))
+
 ## [0.1.1](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.0...plasma6-wallpapers-aerial-v0.1.1) (2026-09-06)
 
 
