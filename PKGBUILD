@@ -6,7 +6,7 @@ pkgdesc="Plasma 6 wallpaper plugin that plays Apple TV Aerial screensaver videos
 arch=('x86_64' 'aarch64')
 url="https://github.com/BirknerAlex/plasma6-wallpapers-aerial"
 license=('GPL-2.0-or-later')
-depends=('plasma6-workspace' 'qt6-declarative' 'qt6-multimedia' 'qt6-base')
+depends=('plasma-workspace' 'qt6-declarative' 'qt6-multimedia' 'qt6-base')
 makedepends=('extra-cmake-modules' 'cmake' 'rust' 'corrosion' 'kpackage' 'libplasma')
 source=("git+${url}.git#tag=${pkgname}-v${pkgver}")
 sha256sums=('SKIP')
