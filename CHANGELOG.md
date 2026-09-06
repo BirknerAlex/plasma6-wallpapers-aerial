@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.3...plasma6-wallpapers-aerial-v0.1.4) (2026-09-06)
+
+
+### Bug Fixes
+
+* correct plasma-workspace dependency name in PKGBUILD ([48d3b19](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/commit/48d3b190e3d68190ccc995b428a79f8bd0164cbc))
+* filter dead entries and merge community manifest to fix stuck video rotation ([4a00dd8](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/commit/4a00dd88eef62cd95e0802cef6fb18600d4f1fa3))
+
 ## [0.1.3](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.2...plasma6-wallpapers-aerial-v0.1.3) (2026-09-06)
 
 
