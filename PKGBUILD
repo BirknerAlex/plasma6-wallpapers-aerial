@@ -8,7 +8,7 @@ url="https://github.com/BirknerAlex/plasma6-wallpapers-aerial"
 license=('GPL-2.0-or-later')
 depends=('plasma6-workspace' 'qt6-declarative' 'qt6-multimedia' 'qt6-base')
 makedepends=('extra-cmake-modules' 'cmake' 'rust' 'corrosion' 'kpackage' 'libplasma')
-source=("git+${url}.git#tag=v${pkgver}")
+source=("git+${url}.git#tag=${pkgname}-v${pkgver}")
 sha256sums=('SKIP')
 
 prepare() {
