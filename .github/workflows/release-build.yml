@@ -1,16 +1,13 @@
 name: Release build
 
-# Fires once release-please's own workflow (.github/workflows/release-please.yml)
-# creates a real (non-draft) GitHub Release for a release-please tag. Requires
-# release-please.yml to run with a RELEASE_PLEASE_TOKEN (see comment there) --
-# a release authored by the default GITHUB_TOKEN won't trigger this, which is
-# what the workflow_dispatch fallback below is for.
+# release-please.yml dispatches this directly (via workflow_dispatch) once
+# it cuts a release, since a release authored by GITHUB_TOKEN can't trigger
+# the `release: published` event below (GitHub's anti-recursion rule). That
+# trigger is kept as a fallback for a release published by hand, and
+# workflow_dispatch also serves as a manual re-run for a failed build.
 on:
   release:
     types: [published]
-  # Manual fallback for when a release was published by the default
-  # GITHUB_TOKEN (e.g. RELEASE_PLEASE_TOKEN isn't set yet) and so didn't
-  # trigger the `release: published` event above.
   workflow_dispatch:
     inputs:
       tag_name:

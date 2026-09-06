@@ -17,7 +17,7 @@ prepare() {
     # `cargo build`/`cargo update` locally, which can trail Cargo.toml's
     # release-please-bumped version between releases -- fix it up before
     # --locked below, which would otherwise refuse to touch the lock file.
-    cargo update --offline --manifest-path rust/Cargo.toml -p aerial_core --precise "$pkgver"
+    cargo update --manifest-path rust/Cargo.toml -p aerial_core --precise "$pkgver"
     # Fetch and vendor Rust dependencies at package-source time, so build()
     # never touches the network -- required for a reproducible/offline AUR
     # build, and this is the only makepkg() phase network access is allowed in.
