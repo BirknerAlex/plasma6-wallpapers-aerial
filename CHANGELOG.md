@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.0...plasma6-wallpapers-aerial-v0.1.1) (2026-09-06)
+
+
+### Bug Fixes
+
+* remove one-time release-as pin causing endless release-please loop ([d0ba467](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/commit/d0ba46794466fea50e729b124375cf9edc465fdd))
+
 ## [0.1.0](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.0...plasma6-wallpapers-aerial-v0.1.0) (2026-09-06)
 
 
