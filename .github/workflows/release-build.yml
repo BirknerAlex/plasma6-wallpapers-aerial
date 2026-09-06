@@ -49,7 +49,7 @@ jobs:
         run: |
           pacman -Syu --noconfirm
           pacman -S --noconfirm --needed \
-            base-devel git jq github-cli \
+            base-devel git github-cli \
             extra-cmake-modules cmake corrosion rust \
             qt6-base qt6-declarative qt6-multimedia \
             kpackage libplasma
@@ -79,23 +79,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "${{ env.TAG_NAME }}" "${{ steps.pkg.outputs.path }}" --clobber
 
-      - name: Install silo CLI
-        env:
-          # Pinned to a specific, reviewed release+digest rather than
-          # resolving "latest" at run time, so a compromised/replaced Silo
-          # release can't silently run code with access to SILO_TOKEN below.
-          # Bump both together when intentionally upgrading the CLI:
-          # https://github.com/BirknerAlex/silo/releases
-          SILO_CLI_VERSION: 0.11.0
-          SILO_CLI_SHA256: b50d520072a6c92a587b17f617ef59c9ede91864d2ce6566463791bf09c5e6e3
-        run: |
-          asset="silo-${SILO_CLI_VERSION}-1-x86_64.pkg.tar.zst"
-          curl -fsSL -o "$asset" "https://github.com/BirknerAlex/silo/releases/download/v${SILO_CLI_VERSION}/${asset}"
-          echo "${SILO_CLI_SHA256}  ${asset}" | sha256sum -c -
-          pacman -U --noconfirm "$asset"
-
       - name: Publish to Silo
-        env:
-          SILO_SERVER: ${{ secrets.SILO_SERVER }}
-          SILO_TOKEN: ${{ secrets.SILO_TOKEN }}
-        run: silo publish "${{ steps.pkg.outputs.path }}" --repo birkneralex --channel stable
+        # Pinned to a specific, reviewed commit rather than a branch/tag
+        # that could move, and to an explicit CLI `version` rather than
+        # this action's own "latest" default, so a compromised/replaced
+        # Silo release can't silently run code with access to SILO_TOKEN.
+        # Bump both together when intentionally upgrading the CLI:
+        # https://github.com/BirknerAlex/silo/releases
+        uses: BirknerAlex/silo/.github/actions/publish@580ab405118d91a6deaa562c8c955ef38bec4583
+        with:
+          server: ${{ secrets.SILO_SERVER }}
+          token: ${{ secrets.SILO_TOKEN }}
+          repo: birkneralex
+          channel: stable
+          files: ${{ steps.pkg.outputs.path }}
+          version: v0.11.0
