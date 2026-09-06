@@ -97,8 +97,7 @@ async fn fetch_community_manifest(client: &reqwest::Client) -> Vec<AerialAsset> 
 /// authoritative when available).
 fn merge_assets(primary: Vec<AerialAsset>, community: Vec<AerialAsset>) -> Vec<AerialAsset> {
     let mut merged = primary;
-    let seen: std::collections::HashSet<String> =
-        merged.iter().map(|a| a.id.clone()).collect();
+    let seen: std::collections::HashSet<String> = merged.iter().map(|a| a.id.clone()).collect();
     for asset in community {
         if !seen.contains(&asset.id) {
             merged.push(asset);

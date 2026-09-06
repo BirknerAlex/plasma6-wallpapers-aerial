@@ -1,0 +1,53 @@
+name: Auto-fix .SRCINFO on release PRs
+
+# release-please bumps pkgver in PKGBUILD (via extra-files) but has no idea
+# .SRCINFO exists, so its release PRs always land with a stale .SRCINFO --
+# which the "`.SRCINFO` matches PKGBUILD" CI job (ci.yml) then correctly
+# fails on every single time. Rather than relaxing that check (which exists
+# specifically to catch drift like the old plasma6-workspace/pkgver-0.1.0
+# staleness), regenerate .SRCINFO and push the fix directly onto the
+# release-please branch so the PR becomes mergeable on its own.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-srcinfo:
+    # release-please's branches are always same-repo (never a fork), so
+    # GITHUB_TOKEN has write access to push back onto head_ref below.
+    if: startsWith(github.head_ref, 'release-please--')
+    runs-on: ubuntu-latest
+    container: archlinux@sha256:82b1b08faae9d61e3e7e13d562f4d09114d939105b0d59ff34140f3bd418593a
+    steps:
+      - name: Pin Arch package repositories to a dated snapshot
+        run: echo 'Server = https://archive.archlinux.org/repos/2026/09/01/$repo/os/$arch' > /etc/pacman.d/mirrorlist
+
+      - name: Install build dependencies
+        run: pacman -Syu --noconfirm --needed base-devel git
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: true
+
+      - name: Create unprivileged build user
+        run: |
+          useradd -m builduser
+          chown -R builduser:builduser "$GITHUB_WORKSPACE"
+
+      - name: Regenerate .SRCINFO if stale
+        run: |
+          su builduser -c 'makepkg --printsrcinfo' > /tmp/generated.SRCINFO
+          if diff -q .SRCINFO /tmp/generated.SRCINFO >/dev/null; then
+            echo ".SRCINFO already up to date"
+            exit 0
+          fi
+          cp /tmp/generated.SRCINFO .SRCINFO
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .SRCINFO
+          git commit -m "chore: regenerate .SRCINFO"
+          git push origin "HEAD:${{ github.head_ref }}"
