@@ -74,7 +74,11 @@ jobs:
       - name: Upload package to GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ env.TAG_NAME }}" "${{ steps.pkg.outputs.path }}" --clobber
+        # --repo avoids gh's default repo auto-detection, which shells out to
+        # git and fails here: makepkg's build user step above chowned the
+        # workspace to builduser, but this step runs back as the container's
+        # default user, so git refuses the mismatched ownership.
+        run: gh release upload "${{ env.TAG_NAME }}" "${{ steps.pkg.outputs.path }}" --clobber --repo "${{ github.repository }}"
 
       - name: Publish to Silo
         # Pinned to a specific, reviewed commit rather than a branch/tag
