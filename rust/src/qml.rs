@@ -212,14 +212,8 @@ impl qobject::AerialManifest {
             qobject::Roles::Url1080Hdr.repr,
             QByteArray::from("url1080HDR"),
         );
-        roles.insert(
-            qobject::Roles::Url4kSdr.repr,
-            QByteArray::from("url4kSDR"),
-        );
-        roles.insert(
-            qobject::Roles::Url4kHdr.repr,
-            QByteArray::from("url4kHDR"),
-        );
+        roles.insert(qobject::Roles::Url4kSdr.repr, QByteArray::from("url4kSDR"));
+        roles.insert(qobject::Roles::Url4kHdr.repr, QByteArray::from("url4kHDR"));
         roles
     }
 
@@ -297,7 +291,10 @@ impl qobject::AerialCache {
 
         self.state
             .get_or_init(|| {
-                let state = Arc::new(CacheState::new(default_cache_dir(), DEFAULT_MAX_CACHE_BYTES as u64));
+                let state = Arc::new(CacheState::new(
+                    default_cache_dir(),
+                    DEFAULT_MAX_CACHE_BYTES as u64,
+                ));
                 // Prime the synchronous lookup index with whatever is
                 // already on disk from a previous session, in the
                 // background -- never blocks the caller.
@@ -329,7 +326,14 @@ impl qobject::AerialCache {
         // Fast, non-blocking cache-hit check -- safe to call from the Qt GUI
         // thread since this plain mutex is only ever held for a few
         // in-memory HashMap operations, never across an .await.
-        if let Some(path_url) = self.rust().sync_cached_paths.lock().unwrap().get(&id_str).cloned() {
+        if let Some(path_url) = self
+            .rust()
+            .sync_cached_paths
+            .lock()
+            .unwrap()
+            .get(&id_str)
+            .cloned()
+        {
             return cxx_qt_lib::QString::from(&path_url);
         }
 
@@ -347,7 +351,10 @@ impl qobject::AerialCache {
             match state.ensure_downloaded(&id_str, &url_str, &protected).await {
                 Ok(outcome) => {
                     let path_url = path_to_file_url(outcome.path());
-                    sync_index.lock().unwrap().insert(id_str.clone(), path_url.clone());
+                    sync_index
+                        .lock()
+                        .unwrap()
+                        .insert(id_str.clone(), path_url.clone());
                     let _ = qt_thread.queue(move |mut cache: core::pin::Pin<&mut Self>| {
                         cache.as_mut().download_finished(
                             cxx_qt_lib::QString::from(&id_str),
@@ -358,7 +365,9 @@ impl qobject::AerialCache {
                 Err(err) => {
                     tracing::warn!("download failed for {id_str}: {err}");
                     let _ = qt_thread.queue(move |mut cache: core::pin::Pin<&mut Self>| {
-                        cache.as_mut().download_failed(cxx_qt_lib::QString::from(&id_str));
+                        cache
+                            .as_mut()
+                            .download_failed(cxx_qt_lib::QString::from(&id_str));
                     });
                 }
             }
@@ -375,7 +384,13 @@ impl qobject::AerialCache {
         use cxx_qt::CxxQtType;
 
         let id_str = id.to_string();
-        if self.rust().sync_cached_paths.lock().unwrap().contains_key(&id_str) {
+        if self
+            .rust()
+            .sync_cached_paths
+            .lock()
+            .unwrap()
+            .contains_key(&id_str)
+        {
             return;
         }
 
