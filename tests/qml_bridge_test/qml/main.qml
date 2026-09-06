@@ -51,6 +51,6 @@ ApplicationWindow {
 
     Component.onCompleted: {
         console.log("[bridge-test] starting manifest refresh");
-        manifest.refresh();
+        manifest.refresh(AerialCache.Sdr1080);
     }
 }

@@ -32,6 +32,18 @@ change is genuinely CI/tooling/docs only, `ci:`/`chore:`/`docs:` is correct
 -- but say so explicitly if asked to "cut a release" or "bump the version"
 afterward, since it won't happen on its own.
 
+## Local install/test workflow: sudo is manual, build/restart are not
+
+This session has no interactive terminal, so `sudo cmake --install build`
+always fails here (no askpass helper). Split the workflow:
+
+- **User** runs `sudo cmake --install build` themselves whenever a system
+  install is needed.
+- **Agent** runs the (non-sudo) `cmake -B build -S .` / `cmake --build
+  build` steps, and after the user confirms the install is done, restarts
+  the `plasma-plasmashell.service` systemd user unit to pick up the new
+  build and verify the fix live.
+
 ## Versioning is synced across three files
 
 `release-please-config.json`'s `extra-files` keeps `rust/Cargo.toml`,

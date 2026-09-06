@@ -4,7 +4,7 @@ use std::sync::Arc;
 use once_cell::sync::OnceCell;
 
 use crate::cache::CacheState;
-use crate::manifest::{fetch_manifest_or_fallback, AerialAsset};
+use crate::manifest::{fetch_combined_manifest, filter_live_assets, AerialAsset};
 use crate::runtime::RUNTIME;
 
 fn path_to_file_url(path: &Path) -> String {
@@ -77,9 +77,11 @@ pub mod qobject {
         fn manifest_loaded(self: Pin<&mut AerialManifest>);
 
         /// Starts (re)fetching the manifest from Apple, falling back to the bundled
-        /// snapshot on failure. Safe to call again to refresh.
+        /// snapshot on failure, then drops entries whose video URL at `quality`
+        /// (the QML `Quality` enum ordinal) turns out to be dead. Safe to call
+        /// again to refresh, e.g. after the user changes the quality setting.
         #[qinvokable]
-        fn refresh(self: Pin<&mut AerialManifest>);
+        fn refresh(self: Pin<&mut AerialManifest>, quality: i32);
     }
 
     unsafe extern "RustQt" {
@@ -175,18 +177,19 @@ pub struct AerialManifestRust {
 }
 
 impl qobject::AerialManifest {
-    pub fn refresh(self: core::pin::Pin<&mut Self>) {
+    pub fn refresh(self: core::pin::Pin<&mut Self>, quality: i32) {
         use cxx_qt::{CxxQtType, Threading};
 
         let qt_thread = self.qt_thread();
         RUNTIME.spawn(async move {
-            let data = fetch_manifest_or_fallback(&crate::http::CLIENT).await;
+            let assets = fetch_combined_manifest(&crate::http::CLIENT).await;
+            let assets = filter_live_assets(&crate::http::CLIENT, assets, quality).await;
             let _ = qt_thread.queue(move |mut manifest: core::pin::Pin<&mut Self>| {
                 // Safety: begin/end reset model bracket a full replacement of
                 // the backing Vec, which is exactly what they're for.
                 unsafe {
                     manifest.as_mut().begin_reset_model();
-                    manifest.as_mut().rust_mut().assets = data.assets;
+                    manifest.as_mut().rust_mut().assets = assets;
                     manifest.as_mut().end_reset_model();
                 }
                 manifest.as_mut().set_ready(true);

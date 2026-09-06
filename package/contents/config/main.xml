@@ -22,7 +22,7 @@
     </entry>
     <entry name="MaxCacheMB" type="int">
       <label>Maximum on-disk cache size for downloaded videos, in megabytes</label>
-      <default>40960</default>
+      <default>4096</default>
     </entry>
     <entry name="WifiOnly" type="bool">
       <label>Only download new videos over Wi-Fi (unmetered) connections</label>

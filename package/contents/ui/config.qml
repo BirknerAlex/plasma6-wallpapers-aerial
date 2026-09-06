@@ -27,7 +27,7 @@ ColumnLayout {
 
     AerialManifest {
         id: manifest
-        Component.onCompleted: manifest.refresh()
+        Component.onCompleted: manifest.refresh(root.cfg_Quality)
     }
 
     function isBlacklisted(id) {

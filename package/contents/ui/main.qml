@@ -118,6 +118,15 @@ WallpaperItem {
         onManifestLoaded: root.rebuildPlaylist()
     }
 
+    // Re-validates the manifest whenever the preferred quality changes, since
+    // a URL that's live at one quality tier can be dead at another.
+    Connections {
+        target: root.configuration
+        function onQualityChanged() {
+            manifest.refresh(root.configuration.Quality);
+        }
+    }
+
     // Extracts each manifest row into a plain object once, so the playlist can
     // be built/shuffled with ordinary JS array logic instead of re-querying
     // the QAbstractListModel by index every time.
@@ -167,7 +176,7 @@ WallpaperItem {
 
     Component.onCompleted: {
         root.loading = true; // cleared once the first frame starts playing
-        manifest.refresh();
+        manifest.refresh(root.configuration.Quality);
     }
 
     Rectangle {
