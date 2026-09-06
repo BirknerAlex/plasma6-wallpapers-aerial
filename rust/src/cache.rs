@@ -382,8 +382,14 @@ mod tests {
             .unwrap();
 
         let ids = cache.cached_ids().await;
-        assert!(ids.contains(&"a".to_string()), "protected id must survive eviction");
-        assert!(ids.contains(&"c".to_string()), "most recent download must survive");
+        assert!(
+            ids.contains(&"a".to_string()),
+            "protected id must survive eviction"
+        );
+        assert!(
+            ids.contains(&"c".to_string()),
+            "most recent download must survive"
+        );
         assert!(cache.total_bytes().await <= 2200 || ids.len() <= 2);
     }
 }

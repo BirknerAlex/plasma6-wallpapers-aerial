@@ -1,86 +1,127 @@
-# plasma6-wallpapers-aerial
+# Aerial Wallpaper for Plasma 6
 
-A native Plasma 6 wallpaper plugin that plays Apple TV "Aerial" screensaver
-videos as the desktop wallpaper. Networking, caching and playlist state are
-handled by a Rust crate (`aerial-core`, via [cxx-qt](https://github.com/KDAB/cxx-qt));
-video decoding/rendering uses Qt's own QtMultimedia pipeline.
+A native Plasma 6 wallpaper plugin that plays Apple TV's "Aerial" screensaver
+videos — aerial drone footage of cities and landscapes around the world — as
+your desktop wallpaper. Videos are streamed from Apple, cached locally, and
+crossfade into one another automatically.
 
-## Architecture
+## Features
 
-- `rust/` -- the `aerial_core` crate, built as a `cdylib`:
-  - `manifest.rs` -- fetches/parses `https://sylvan.apple.com/Aerials/2x/entries.json`,
-    falling back to a bundled snapshot on failure.
-  - `cache.rs` -- download/LRU-cache/eviction logic, independent of Qt (unit
-    tested with `wiremock` + `tempfile`).
-  - `qml.rs` -- the `#[cxx_qt::bridge]` exposing `AerialManifest` (a
-    `QAbstractListModel`) and `AerialCache` as QML types.
-- `plugin/` -- a small, hand-written `QQmlEngineExtensionPlugin` built directly
-  by CMake. See "Known issue" below for why this exists instead of using
-  cxx-qt-build's own generated dynamic plugin entry point.
-- `package/` -- the KPackage (`Plasma/Wallpaper`) itself: `metadata.json`,
-  `contents/config/main.xml` (KConfigXT), `contents/ui/main.qml`,
-  `contents/ui/config.qml`.
-- `tests/qml_bridge_test/` -- a standalone Qt Quick app that loads the QML
-  module in isolation, to validate the Rust<->QML bridge without any
-  Plasma-specific plumbing.
-- `CMakeLists.txt` -- wires the Rust crate (via Corrosion/cxx-qt-cmake), the
-  plugin, and the KPackage (`plasma_install_package`) together.
-- `PKGBUILD` -- AUR packaging.
+- Plays the same Aerial video catalog used by Apple TV.
+- Automatically downloads and caches videos on disk so playback is smooth
+  after the first watch.
+- Choice of quality: SDR 1080p, HDR 1080p, SDR 4K, or HDR 4K.
+- Optional Wi-Fi-only downloading, to avoid burning mobile/metered data.
+- Configurable cache size limit, with automatic eviction of old videos.
+- Shuffle playback, or exclude specific locations you don't want to see.
+- Works correctly across multiple monitors with different resolutions and
+  scale factors.
 
-## Known issue: why there's a hand-written plugin shim
+## Installing
 
-`cxx-qt-build` 0.10.0 generates its own dynamic QML plugin entry point
-(`qt_plugin_instance`), but compiles it into the same static archive as the
-rest of the Rust crate. Rust's default `cdylib` link flags on Linux
-(`--exclude-libs=ALL`) demote every symbol contributed by a linked static
-archive to local ELF binding -- including that entry point -- so Qt can never
-`dlsym()` it, even though the symbol is present in the binary. This is
-reproducible with KDAB's own `qml_minimal_plugin` example, not something
-specific to this project. Neither `--export-dynamic`/
-`--export-dynamic-symbol` nor post-hoc `objcopy --globalize-symbol` can undo
-it once `--exclude-libs=ALL` has been applied.
+### Arch Linux (pacman repo)
 
-The actual QML type registration for `AerialManifest`/`AerialCache` is
-unaffected by this -- it happens via static initializers that run
-automatically as soon as `libaerial_core.so` is loaded by anything. So
-`plugin/aerial_plugin.{h,cpp}` provides a minimal, plain-CMake/AUTOMOC-built
-`QQmlEngineExtensionPlugin` that simply links against `aerial_core-shared`,
-sidestepping the export-visibility problem entirely. See
-`cmake/AerialQmlPlugin.cmake` for the full explanation and wiring.
+Packages are published for every release to the maintainer's
+[Silo](https://github.com/BirknerAlex/silo) instance, **for x86_64 only**
+(aarch64 users: build from source or the AUR instead, see below). Add it as a
+pacman repository by appending this to `/etc/pacman.conf`:
 
-## Known issue: Apple's TLS chain and stale catalog
+```ini
+[birkneralex]
+SigLevel = PackageOptional DatabaseRequired
+Server = https://silo.tyrola.dev/birkneralex/stable/pacman/$arch
+```
 
-`sylvan.apple.com` (the Aerial CDN) is signed by "Apple Root CA", a
-long-standing Apple root that predates most public CA programs and was never
-submitted to Mozilla's/most Linux distros' root stores (it's mainly used for
-Apple's internal services). Neither the system trust store nor rustls's
-bundled `webpki-roots` trust it, so plain TLS verification fails with
-`UnknownIssuer` even though the connection is genuinely to Apple. `rust/http.rs`
-pins the specific intermediate CA that signs this endpoint (captured directly
-from Apple's own TLS handshake, `rust/assets/apple-server-authentication-ca.pem`)
-as an additional trusted root for this client only -- this keeps verification
-strict (a MITM'd/spoofed cert still fails) rather than disabling verification.
+Import the repo's signing key (once), **checking the fingerprint it prints
+against the one below before trusting it** — this is what stops a
+compromised/spoofed key from being silently accepted:
 
-Separately, Apple's `entries.json` catalog lists more entries than currently
-have live video files -- in testing, only 1 of 13 listed assets had a working
-URL. This isn't something we can fix (it's Apple's content catalog drifting
-out of sync with the manifest), so `AerialCache` emits `downloadFailed` for
-any dead URL and `main.qml` skips to the next playlist entry rather than
-getting stuck on a black screen.
+```sh
+curl -fsS https://silo.tyrola.dev/pacman-signing-key | pacman-key --add -
+```
 
-## Known issue: HDR video playback can break panel screen assignment
+Expected fingerprint: `5924 6862 5BFB B22D 7367  C5A0 C792 084B 5084 672E`
 
-Observed on a multi-monitor system: playing a 4K HDR (Dolby Vision) Aerial
-video triggered KWin/Qt to renegotiate the video surface format, which in
-turn caused a panel's `screen` property to reset to `-1` (unassigned to any
-screen) -- making it invisible until fixed. This is a Wayland/KWin-level
-display-mode-switch issue, not something in this plugin's own code, but it's
-this plugin's HDR video playback that triggers it. Confirmed to be a screen
-assignment issue, not a frozen/blocked process: plasmashell's D-Bus interface
-stayed fully responsive throughout using `qdbus6 org.kde.plasmashell
-/PlasmaShell org.kde.PlasmaShell.immutable` to probe latency.
+If (and only if) it matches, trust it:
 
-If a panel disappears, recover it without restarting plasmashell:
+```sh
+pacman-key --lsign-key 592468625BFBB22D7367C5A0C792084B5084672E
+```
+
+Then install as usual (a full `-Syu` avoids Arch's unsupported
+["partial upgrade"](https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported)
+state):
+
+```sh
+sudo pacman -Syu plasma6-wallpapers-aerial
+```
+
+### Arch Linux (AUR)
+
+```sh
+makepkg -si
+```
+
+Or, once available on the AUR, install with your favorite AUR helper:
+
+```sh
+paru -S plasma6-wallpapers-aerial
+```
+
+### Other distributions
+
+Prebuilt packages aren't published yet for other distributions. You'll need
+`extra-cmake-modules`, `cmake`, `rust`, `corrosion`, and Qt6
+(`qt6-base`, `qt6-declarative`, `qt6-multimedia`), then:
+
+```sh
+cmake -B build -S .
+cmake --build build
+sudo cmake --install build
+```
+
+## Setting it as your wallpaper
+
+1. Open **System Settings → Appearance → Wallpaper**.
+2. Change the wallpaper type dropdown to **Aerial**.
+3. The first video will start downloading automatically — playback begins as
+   soon as it's ready.
+
+## Configuration
+
+Click the wallpaper's settings (the gear/pencil icon in the wallpaper picker)
+to configure:
+
+- **Quality** — SDR 1080p (default), HDR 1080p, SDR 4K, or HDR 4K. Higher
+  quality tiers use more bandwidth and disk space; see the HDR note below
+  before switching away from the default.
+- **Shuffle** — play videos in random order instead of catalog order.
+- **Cache size** — maximum disk space to use for downloaded videos (default
+  40 GB); the oldest, least-recently-played videos are evicted first once the
+  limit is reached.
+- **Wi-Fi only** — skip downloading new videos unless connected to Wi-Fi.
+- **Excluded locations** — hide specific Aerial locations from playback.
+
+## Troubleshooting
+
+### A video fails to play / gets skipped
+
+Apple's video catalog sometimes lists locations whose video files are no
+longer actually hosted. When that happens, the plugin automatically skips to
+the next video in the playlist rather than getting stuck on a black screen.
+This is expected and isn't something a plugin update can fix — it depends on
+Apple's own catalog.
+
+### A panel/taskbar disappears after switching to an HDR quality
+
+On some multi-monitor Wayland setups, playing 4K HDR (Dolby Vision) video can
+cause KWin to reset which screen a panel is assigned to, making it invisible.
+This is a Wayland/KWin display-mode-switching issue triggered by HDR
+playback, not a crash — Plasma stays fully responsive.
+
+Staying on the default **SDR 1080p** quality avoids this entirely. If it
+happens and you don't want to switch quality tiers, you can reassign the
+panel without restarting Plasma:
 
 ```sh
 qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
@@ -90,91 +131,11 @@ p.screen = 0;  // set to whichever screen index the panel belongs on
 '
 ```
 
-The default `Quality: SDR1080` setting avoids HDR entirely and sidesteps
-this; it only reproduces when a config is explicitly switched to an HDR
-quality tier.
+## Contributing
 
-## Building
+See the source layout, build instructions, and testing checklist in
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-Requires: `extra-cmake-modules`, `cmake`, `rust`, `corrosion`, Qt6
-(`qt6-base`, `qt6-declarative`, `qt6-multimedia`).
+## License
 
-```sh
-cmake -B build -S .
-cmake --build build
-```
-
-This builds the Rust crate, the QML plugin, the standalone bridge test, and
-stages the KPackage for `plasma_install_package`.
-
-## Testing
-
-Follow these steps in order -- each validates a different layer, so a failure
-narrows down where to look.
-
-### 1. Standalone Rust<->QML bridge test
-
-Before touching Plasma at all, verify the Rust<->QML bridge in isolation:
-
-```sh
-cmake --build build --target aerial_qml_bridge_test
-QML2_IMPORT_PATH=build/qml_modules ./build/tests/qml_bridge_test/aerial_qml_bridge_test
-```
-
-It fetches the Aerial manifest (falling back to the bundled snapshot if
-offline), logs the entry count and first entry id, exercises
-`AerialCache.ensureDownloaded`, and exits 0. If it hangs for 15 seconds and
-exits with status 2, the manifest never loaded -- check network access and/or
-that `rust/assets/entries.fallback.json` is a valid fallback.
-
-### 2. Install the KPackage
-
-```sh
-kpackagetool6 --type Plasma/Wallpaper -i package/
-```
-
-(Re-installing after changes: `kpackagetool6 --type Plasma/Wallpaper -u package/`.)
-
-Also install the QML plugin somewhere Qt can find it -- either
-`cmake --install build` with a normal `/usr` prefix, or manually copy
-`build/qml_modules/org` into `$(qmake6 -query QT_INSTALL_QML)`.
-
-Then, in System Settings -> Appearance -> Wallpaper, select "Aerial" as the
-wallpaper type on a single monitor first. Verify:
-- The config dialog shows quality/shuffle/cache/Wi-Fi-only/location controls.
-- Video starts playing within a few seconds (first video needs to download).
-- Crossfade between videos happens without a black flash.
-
-### 3. Multi-monitor test
-
-Repeat with two or more monitors at different resolutions and scale factors.
-Verify each screen's video fills its own geometry correctly
-(`PreserveAspectCrop`, no letterboxing/stretching) and that monitors don't
-block on each other's downloads.
-
-### 4. Battery / GPU decode sanity check
-
-While a video is playing, confirm hardware decode is engaged (not a software
-fallback burning CPU):
-
-```sh
-intel_gpu_top      # Intel
-# or
-radeontop          # AMD
-```
-
-You should see video decode engine usage, and `top`/`htop` should show low
-CPU usage from `plasmashell`.
-
-## AUR packaging
-
-```sh
-makepkg -si
-```
-
-For a clean-room verification before submitting to the AUR, build in a clean
-chroot (e.g. `extra-x86_64-build` from `devtools`) rather than relying on your
-own machine's package set.
-
-Note: `PKGBUILD`'s `source=` array points at a tagged git release
-(`v$pkgver`); push a matching tag before `makepkg` can fetch it.
+GPL-2.0-or-later

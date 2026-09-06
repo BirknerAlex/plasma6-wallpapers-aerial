@@ -1,0 +1,90 @@
+name: Release build
+
+# Fires once release-please's own workflow (.github/workflows/release-please.yml)
+# creates a real (non-draft) GitHub Release for a release-please tag. Requires
+# release-please.yml to run with a RELEASE_PLEASE_TOKEN (see comment there) --
+# a release authored by the default GITHUB_TOKEN won't trigger this.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+# Only x86_64 is built and published here even though PKGBUILD/pacman-repo
+# consumers may see aarch64 referenced elsewhere in docs -- cross-building
+# the Qt6/cxx-qt/corrosion toolchain for aarch64 needs either a native ARM
+# runner or QEMU emulation, neither of which is set up yet. Revisit if/when
+# aarch64 support is actually needed.
+jobs:
+  build-and-publish:
+    name: Build Arch package and publish
+    runs-on: ubuntu-latest
+    # archlinux:latest, pinned to a reviewed digest (see ci.yml for the same
+    # pin) so the toolchain used for release artifacts doesn't shift without
+    # a deliberate bump.
+    container: archlinux@sha256:82b1b08faae9d61e3e7e13d562f4d09114d939105b0d59ff34140f3bd418593a
+    steps:
+      # The container digest above only fixes the starting filesystem;
+      # pacman -Syu still resolves packages from whatever's live on the
+      # mirrors at run time, so a rebuild of the same release tag could get a
+      # different toolchain, or hit a mirror mid-transition. Pin to a fixed
+      # Arch Linux Archive date. Bump deliberately:
+      # https://archive.archlinux.org/repos/
+      - name: Pin Arch package repositories to a dated snapshot
+        run: echo 'Server = https://archive.archlinux.org/repos/2026/09/01/$repo/os/$arch' > /etc/pacman.d/mirrorlist
+
+      - name: Install build dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm --needed \
+            base-devel git jq github-cli \
+            extra-cmake-modules cmake corrosion rust \
+            qt6-base qt6-declarative qt6-multimedia \
+            kpackage libplasma
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
+
+      - name: Create unprivileged build user
+        run: |
+          useradd -m builduser
+          chown -R builduser:builduser "$GITHUB_WORKSPACE"
+
+      - name: makepkg
+        run: su builduser -c 'makepkg --noconfirm --nodeps'
+
+      - name: Locate built package
+        id: pkg
+        run: |
+          pkgfile=$(ls -1 ./*.pkg.tar.zst | head -n1)
+          echo "path=$pkgfile" >> "$GITHUB_OUTPUT"
+          echo "name=$(basename "$pkgfile")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload package to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "${{ steps.pkg.outputs.path }}" --clobber
+
+      - name: Install silo CLI
+        env:
+          # Pinned to a specific, reviewed release+digest rather than
+          # resolving "latest" at run time, so a compromised/replaced Silo
+          # release can't silently run code with access to SILO_TOKEN below.
+          # Bump both together when intentionally upgrading the CLI:
+          # https://github.com/BirknerAlex/silo/releases
+          SILO_CLI_VERSION: 0.11.0
+          SILO_CLI_SHA256: b50d520072a6c92a587b17f617ef59c9ede91864d2ce6566463791bf09c5e6e3
+        run: |
+          asset="silo-${SILO_CLI_VERSION}-1-x86_64.pkg.tar.zst"
+          curl -fsSL -o "$asset" "https://github.com/BirknerAlex/silo/releases/download/v${SILO_CLI_VERSION}/${asset}"
+          echo "${SILO_CLI_SHA256}  ${asset}" | sha256sum -c -
+          pacman -U --noconfirm "$asset"
+
+      - name: Publish to Silo
+        env:
+          SILO_SERVER: ${{ secrets.SILO_SERVER }}
+          SILO_TOKEN: ${{ secrets.SILO_TOKEN }}
+        run: silo publish "${{ steps.pkg.outputs.path }}" --repo birkneralex --channel stable
