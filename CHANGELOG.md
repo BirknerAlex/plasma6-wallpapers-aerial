@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.2...plasma6-wallpapers-aerial-v0.1.3) (2026-09-06)
+
+
+### Bug Fixes
+
+* pass --repo to gh release upload to avoid dubious-ownership git failure ([9753beb](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/commit/9753bebe25d172fcd98c899a6634b12b874ef551))
+
 ## [0.1.2](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.1...plasma6-wallpapers-aerial-v0.1.2) (2026-09-06)
 
 
