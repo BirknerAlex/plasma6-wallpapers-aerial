@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.4...plasma6-wallpapers-aerial-v0.1.5) (2026-09-06)
+
+
+### Bug Fixes
+
+* regenerate stale .SRCINFO and guard against future drift ([4705e8d](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/commit/4705e8dc51c8bcbb1f646679fb19aabf4db76f98))
+
 ## [0.1.4](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.3...plasma6-wallpapers-aerial-v0.1.4) (2026-09-06)
 
 
