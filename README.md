@@ -7,13 +7,20 @@ crossfade into one another automatically.
 
 ## Features
 
-- Plays the same Aerial video catalog used by Apple TV.
+- Plays the same Aerial video catalog used by Apple TV, from Apple's current
+  (tvOS 26) resource bundle — around 140 clips.
 - Automatically downloads and caches videos on disk so playback is smooth
   after the first watch.
 - Choice of quality: SDR 1080p, HDR 1080p, SDR 4K, or HDR 4K.
 - Optional Wi-Fi-only downloading, to avoid burning mobile/metered data.
-- Configurable cache size limit, with automatic eviction of old videos.
-- Shuffle playback, or exclude specific locations you don't want to see.
+- Configurable cache size limit (16 GB by default, enough for roughly forty
+  4K clips), with automatic eviction of old videos.
+- Fetches at most one new video per day, so a 140-clip catalog fills the
+  cache gradually in the background instead of downloading constantly.
+- Shuffle playback, or exclude specific locations you don't want to see —
+  the picker shows a preview thumbnail for each one.
+- Filter by time of day: all videos, daytime only, night only, or matched
+  to your desktop's clock so it turns dark in the evening with you.
 - Works correctly across multiple monitors with different resolutions and
   scale factors.
 

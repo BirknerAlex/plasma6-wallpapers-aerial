@@ -16,13 +16,25 @@
       </choices>
       <default>SDR1080</default>
     </entry>
+    <entry name="TimeOfDay" type="Enum">
+      <label>Restrict playback to videos shot at a given time of day</label>
+      <whatsthis>All plays the whole catalog. Day covers Apple's day and sunrise footage, Night its night and sunset footage. MatchClock follows the desktop's own clock, switching between them as the day goes on.</whatsthis>
+      <choices>
+        <choice name="All"/>
+        <choice name="Day"/>
+        <choice name="Night"/>
+        <choice name="MatchClock"/>
+      </choices>
+      <default>All</default>
+    </entry>
     <entry name="Shuffle" type="bool">
       <label>Play Aerial videos in random order</label>
       <default>true</default>
     </entry>
     <entry name="MaxCacheMB" type="int">
       <label>Maximum on-disk cache size for downloaded videos, in megabytes</label>
-      <default>4096</default>
+      <whatsthis>A 4K HDR clip is a few hundred megabytes, so the default holds roughly forty of them; a smaller budget means videos are evicted and re-downloaded as playback cycles.</whatsthis>
+      <default>16384</default>
     </entry>
     <entry name="WifiOnly" type="bool">
       <label>Only download new videos over Wi-Fi (unmetered) connections</label>
