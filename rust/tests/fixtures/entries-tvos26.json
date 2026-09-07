@@ -1,0 +1,68 @@
+{
+    "initialAssetCount": 4,
+    "version": 1,
+    "assets": [
+        {
+            "categories": [
+                "55B7C95D-CEAF-4FD8-ADEF-F5BC657D8F6D"
+            ],
+            "previewImage-900x580": "",
+            "pointsOfInterest": {
+                "32": "GMT026_363A_103NC_E1027_32",
+                "195": "GMT026_363A_103NC_E1027_195",
+                "110": "GMT026_363A_103NC_E1027_110",
+                "0": "GMT026_363A_103NC_E1027_0",
+                "22": "GMT026_363A_103NC_E1027_22",
+                "150": "GMT026_363A_103NC_E1027_150",
+                "260": "GMT026_363A_103NC_E1027_260",
+                "180": "GMT026_363A_103NC_E1027_180",
+                "60": "GMT026_363A_103NC_E1027_60"
+            },
+            "timeOfDay": "night",
+            "scene": "space",
+            "localizedNameKey": "GMT026_363A_103NC_E1027_KOREA_JAPAN_NIGHT_NAME",
+            "showInTopLevel": true,
+            "shotID": "GMT026_363A_103NC_E1027_KOREA_JAPAN_NIGHT",
+            "includeInShuffle": true,
+            "id": "009BA758-7060-4479-8EE8-FB9B40C8FB97",
+            "url-4K-HDR": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/5f/8d/d7/5f8dd7a6-37aa-cf2f-8b06-931ea6a4054f/comp_GMT026_363A_103NC_E1027_KOREA_JAPAN_NIGHT_v18_HDR_PS_20180907_HDR_4K_HEVC.mov",
+            "url-1080-SDR": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/5f/8d/d7/5f8dd7a6-37aa-cf2f-8b06-931ea6a4054f/comp_GMT026_363A_103NC_E1027_KOREA_JAPAN_NIGHT_v18_SDR_PS_20180907_SDR_2K_HEVC.mov",
+            "url-4K-SDR": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/5f/8d/d7/5f8dd7a6-37aa-cf2f-8b06-931ea6a4054f/comp_GMT026_363A_103NC_E1027_KOREA_JAPAN_NIGHT_v18_SDR_PS_20180907_SDR_4K_HEVC.mov",
+            "subcategories": [
+                "61171241-39F3-4ADE-84AA-9CD4EE4A78DA"
+            ],
+            "url-1080-H264": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/97/e9/06/97e90616-1227-c670-6118-bd5ae991b43b/comp_GMT026_363A_103NC_E1027_KOREA_JAPAN_NIGHT_v18_SDR_PS_20180907_SDR_2K_AVC.mov",
+            "preferredOrder": 9,
+            "accessibilityLabel": "Korea and Japan Night",
+            "previewImage": "https://sylvan.apple.com/itunes-assets/Aerials221/v4/86/53/43/8653438c-a104-77a0-ce9a-8a370d39795f/GMT026_363A_900x580.png",
+            "url-1080-HDR": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/5f/8d/d7/5f8dd7a6-37aa-cf2f-8b06-931ea6a4054f/comp_GMT026_363A_103NC_E1027_KOREA_JAPAN_NIGHT_v18_HDR_PS_20180907_HDR_2K_HEVC.mov"
+        },
+        {
+            "categories": [
+                "55B7C95D-CEAF-4FD8-ADEF-F5BC657D8F6D"
+            ],
+            "previewImage-900x580": "",
+            "pointsOfInterest": {
+                "0": "GMT110_112NC_364D_1054_0"
+            },
+            "timeOfDay": "sunrise",
+            "scene": "space",
+            "localizedNameKey": "GMT110_112NC_364D_1054_AURORA_ANTARCTICA_NAME",
+            "showInTopLevel": true,
+            "shotID": "GMT110_112NC_364D_1054_AURORA_ANTARCTICA",
+            "includeInShuffle": true,
+            "id": "03EC0F5E-CCA8-4E0A-9FEC-5BD1CE151182",
+            "url-4K-HDR": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/5f/8d/d7/5f8dd7a6-37aa-cf2f-8b06-931ea6a4054f/comp_GMT110_112NC_364D_1054_AURORA_ANTARTICA__COMP_FINAL_v34_PS_HDR_20181107_HDR_4K_HEVC.mov",
+            "url-1080-SDR": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/5f/8d/d7/5f8dd7a6-37aa-cf2f-8b06-931ea6a4054f/comp_GMT110_112NC_364D_1054_AURORA_ANTARTICA__COMP_FINAL_v34_PS_SDR_20181107_SDR_2K_HEVC.mov",
+            "url-4K-SDR": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/5f/8d/d7/5f8dd7a6-37aa-cf2f-8b06-931ea6a4054f/comp_GMT110_112NC_364D_1054_AURORA_ANTARTICA__COMP_FINAL_v34_PS_SDR_20181107_SDR_4K_HEVC.mov",
+            "subcategories": [
+                "81D2C1A9-4E73-4BA0-B62B-86F4B5FE4A12"
+            ],
+            "url-1080-H264": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/97/e9/06/97e90616-1227-c670-6118-bd5ae991b43b/comp_GMT110_112NC_364D_1054_AURORA_ANTARTICA__COMP_FINAL_v34_PS_SDR_20181107_SDR_2K_AVC.mov",
+            "preferredOrder": 4,
+            "accessibilityLabel": "Antarctica",
+            "previewImage": "https://sylvan.apple.com/itunes-assets/Aerials221/v4/86/53/43/8653438c-a104-77a0-ce9a-8a370d39795f/GMT110_112NC_900x580.png",
+            "url-1080-HDR": "https://sylvan.apple.com/itunes-assets/Aerials116/v4/5f/8d/d7/5f8dd7a6-37aa-cf2f-8b06-931ea6a4054f/comp_GMT110_112NC_364D_1054_AURORA_ANTARTICA__COMP_FINAL_v34_PS_HDR_20181107_HDR_2K_HEVC.mov"
+        }
+    ]
+}
