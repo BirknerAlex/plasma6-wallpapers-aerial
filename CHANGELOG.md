@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.2.0...plasma6-wallpapers-aerial-v0.2.1) (2026-09-07)
+
+
+### Bug Fixes
+
+* stop committing .SRCINFO and sync Cargo.lock in CI ([fefbc2c](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/commit/fefbc2c563e99c75f2a795f08bf6cf30d9aa2d1b))
+
 ## [0.2.0](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.5...plasma6-wallpapers-aerial-v0.2.0) (2026-09-07)
 
 

@@ -1,6 +1,6 @@
 # Maintainer: Alexander Birkner <alex.birkner@gmail.com>
 pkgname=plasma6-wallpapers-aerial
-pkgver=0.2.0 # x-release-please-version
+pkgver=0.2.1 # x-release-please-version
 pkgrel=1
 pkgdesc="Plasma 6 wallpaper plugin that plays Apple TV Aerial screensaver videos"
 arch=('x86_64' 'aarch64')
