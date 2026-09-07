@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.5...plasma6-wallpapers-aerial-v0.2.0) (2026-09-07)
+
+
+### Features
+
+* track Apple's tvOS 26 Aerial catalog, filter by time of day, show thumbnails ([7123b98](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/commit/7123b98d68a7124ea6323ee951ab9f5efc4db92e))
+
 ## [0.1.5](https://github.com/BirknerAlex/plasma6-wallpapers-aerial/compare/plasma6-wallpapers-aerial-v0.1.4...plasma6-wallpapers-aerial-v0.1.5) (2026-09-06)
 
 
