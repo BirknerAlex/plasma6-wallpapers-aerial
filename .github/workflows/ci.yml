@@ -61,39 +61,6 @@ jobs:
         working-directory: rust
         run: cargo test --all-features
 
-  srcinfo-check:
-    name: .SRCINFO matches PKGBUILD
-    runs-on: ubuntu-latest
-    # .SRCINFO is committed (AUR-style repo convention) but nothing
-    # regenerates it automatically -- it silently drifted out of sync with
-    # PKGBUILD for several releases (still listing the old `plasma6-workspace`
-    # dependency name and pkgver 0.1.0 as of the v0.1.4 release) before this
-    # check was added. Fail CI if it's stale so that can't happen again.
-    container: archlinux@sha256:82b1b08faae9d61e3e7e13d562f4d09114d939105b0d59ff34140f3bd418593a
-    steps:
-      - name: Pin Arch package repositories to a dated snapshot
-        run: echo 'Server = https://archive.archlinux.org/repos/2026/09/01/$repo/os/$arch' > /etc/pacman.d/mirrorlist
-
-      - name: Install build dependencies
-        run: pacman -Syu --noconfirm --needed base-devel git
-
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Create unprivileged build user
-        run: |
-          useradd -m builduser
-          chown -R builduser:builduser "$GITHUB_WORKSPACE"
-
-      - name: Compare generated .SRCINFO against the committed one
-        run: |
-          su builduser -c 'makepkg --printsrcinfo' > /tmp/generated.SRCINFO
-          diff -u .SRCINFO /tmp/generated.SRCINFO || {
-            echo "::error::.SRCINFO is out of date -- run 'makepkg --printsrcinfo > .SRCINFO' and commit it";
-            exit 1;
-          }
-
   cmake-build:
     name: CMake build (Arch)
     runs-on: ubuntu-latest
@@ -115,6 +82,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+
+      - name: Sync Cargo.lock's aerial_core entry
+        # release-please bumps rust/Cargo.toml's version via extra-files but
+        # has no idea Cargo.lock exists, so Cargo.lock's own aerial_core
+        # entry trails it between releases. corrosion builds with `--locked`,
+        # which then refuses to touch the lock file itself. This still needs
+        # network access on a cold cache (to fetch the crates.io index for
+        # aerial_core's own dependencies), same as the `cmake --build` step
+        # below.
+        working-directory: rust
+        run: cargo update -p aerial_core
 
       - name: Configure
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -Wno-dev

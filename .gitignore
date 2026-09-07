@@ -3,3 +3,4 @@
 pkg/
 *.pkg.tar.*
 rust/.qmlls.ini
+/.SRCINFO
